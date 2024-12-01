@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page with Background Video, File Names, MD5, and Download Buttons</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Reset styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: transparent; /* Make the body transparent */
+      font-family: 'Arial', sans-serif;
+      position: relative; /* To position content over the video */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    /* Background Video Styles */
+    .background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1; /* Makes sure the video stays behind other content */
+    }
+
+    /* Back icon button style - Moved to footer */
+    .back-icon {
+      position: fixed;
+      bottom: 20px; /* Move the back icon to the bottom */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #000;
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      font-size: 20px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+      z-index: 1; /* Ensure it's above the video */
+    }
+
+    .back-icon:hover {
+      background-color: #333;
+    }
+
+    /* Centered Heading Style - Badge */
+    .page-heading {
+      font-size: 24px; /* Smaller size for a badge-like appearance */
+      font-weight: bold;
+      color: white; /* White text color */
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      opacity: 0; /* Initially hidden for animation */
+      animation: fadeInFromTop 2s forwards; /* Apply animation */
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+      padding: 10px 20px; /* Padding to make it look like a badge */
+      border-radius: 20px; /* Rounded corners */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+      white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+    /* Fade-in from top animation */
+    @keyframes fadeInFromTop {
+      0% {
+        transform: translateX(-50%) translateY(-50px); /* Start above the screen */
+        opacity: 0;
+      }
+      100% {
+        transform: translateX(-50%) translateY(0); /* End at the normal position */
+        opacity: 1;
+      }
+    }
+
+    /* File name and download section */
+    .download-section {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1; /* Ensure it's above the video */
+      width: 90%; /* Increase width to stretch the box */
+      max-width: 800px; /* Ensure max width */
+      min-width: 400px; /* Ensure minimum width */
+      align-items: center; /* Center the content */
+      background-color: rgba(255, 255, 255, 0.7); /* Slight transparent background for readability */
+      border-radius: 10px; /* Rounded corners */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Slight shadow for depth */
+    }
+
+    .file-download {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      width: 100%; /* Make sure file-download stretches the entire width */
+      flex-wrap: wrap;
+    }
+
+    /* Adjusted file layout */
+    .file-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: bold;
+      flex: 2;
+      text-align: left;
+    }
+
+    /* File size and MD5 styling */
+    .file-size-md5 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 2;
+    }
+
+    .file-size {
+      font-size: 14px;
+      color: #555;
+      margin-right: 10px; /* Space between file size and MD5 */
+    }
+
+    .file-md5 {
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+
+    /* Adjusted Download Button to fit text */
+    .download-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px; /* Reduced padding to fit the text */
+      font-size: 14px; /* Font size adjusted for better fit */
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      white-space: nowrap; /* Prevents text from wrapping */
+      flex: 0; /* Let the button fit to the text length */
+    }
+
+    .download-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Responsive design for small screens */
+    @media (max-width: 768px) {
+      .file-download {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .file-info {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
+      .file-name {
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .file-size-md5 {
+        margin-bottom: 10px;
+        justify-content: center;
+      }
+
+      .file-size {
+        margin-bottom: 5px;
+      }
+
+      .download-btn {
+        width: auto; /* Allow button to auto adjust width */
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video class="background-video" autoplay loop muted>
+    <source src="beryllium.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Page Heading as a Badge -->
+  <div class="page-heading">Beryllium/POCOPHONE F1</div>
+
+  <!-- File names, MD5 values, and download buttons -->
+  <div class="download-section">
+    <div class="file-download">
+      <div class="file-info">
+        <div class="file-name">File 1 Name</div>
+        <div class="file-size-md5">
+          <div class="file-size">Size: 1.2 MB</div>
+          <div class="file-md5">MD5: d41d8cd98f00b204e9800998ecf8427e</div>
+        </div>
+        <a href="#" class="download-btn">Download</a>
+      </div>
+    </div>
+    <div class="file-download">
+      <div class="file-info">
+        <div class="file-name">File 2 Name</div>
+        <div class="file-size-md5">
+          <div class="file-size">Size: 2.4 MB</div>
+          <div class="file-md5">MD5: e99a18c428cb38d5f260853678922e03</div>
+        </div>
+        <a href="#" class="download-btn">Download</a>
+      </div>
+    </div>
+    <div class="file-download">
+      <div class="file-info">
+        <div class="file-name">File 3 Name</div>
+        <div class="file-size-md5">
+          <div class="file-size">Size: 3.5 MB</div>
+          <div class="file-md5">MD5: 098f6bcd4621d373cade4e832627b4f6</div>
+        </div>
+        <a href="#" class="download-btn">Download</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back Icon Button -->
+<div class="back-icon" onclick="window.location.href='index.html';">
+    <i class="fas fa-arrow-left"></i>
+  </div>
+  
+</body>
+</html>
